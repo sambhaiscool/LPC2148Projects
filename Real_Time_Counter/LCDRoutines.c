@@ -6,10 +6,10 @@
 #define  lcd_en_clr() IOCLR0 = LCD_EN					// EN = 0 (Disable)
 
 #define  lcd_dir_write()  IODIR0 |= 0x01FFFFFF			// LCD Data Bus = Write
-														// Mathew Pins 0:24 configured as O/P pins
-														// uptill pin 24 been configured as o/p pin 
-														// since P0.23 	is connected to D7 of LCD 16X2 component
-//#define  lcd_dir_read()   IODIR1 &= 0xFFC3FFFF			// LCD Data Bus = Read 
+								// Pins 0:24 configured as O/P pins
+								// uptill pin 24 been configured as o/p pin 
+								// since P0.23 	is connected to D7 of LCD 16X2 component
+//#define  lcd_dir_read()   IODIR1 &= 0xFFC3FFFF		// LCD Data Bus = Read 
 
 #define  lcd_clear()          lcd_write_control(0x01)	// Clear Display
 #define  lcd_cursor_home()    lcd_write_control(0x02)	// Set Cursor = 0
@@ -24,16 +24,16 @@
 #define  lcd_display_sright() lcd_write_control(0x1C)	// Shift Right Display
 
 /* pototype  section */
-void lcd_init(void);									// Initial LCD
-void lcd_out_data4(unsigned char);						// Strobe 4-Bit Data to LCD
-void lcd_write_byte(unsigned char);						// Write 1 Byte Data to LCD
-void lcd_write_control(unsigned char); 					// Write Instruction
-void lcd_write_ascii(unsigned char); 					// Write LCD Display(ASCII)
-void goto_cursor(unsigned char);						// Set Position Cursor LCD
-void lcd_print(unsigned char*);							// Print Display to LCD
-//char busy_lcd(void);									// Read Busy LCD Status
-void enable_lcd(void);	 								// Enable Pulse
-void delay(unsigned long int);							// Delay Function
+void lcd_init(void);					// Initial LCD
+void lcd_out_data4(unsigned char);			// Strobe 4-Bit Data to LCD
+void lcd_write_byte(unsigned char);			// Write 1 Byte Data to LCD
+void lcd_write_control(unsigned char); 			// Write Instruction
+void lcd_write_ascii(unsigned char); 			// Write LCD Display(ASCII)
+void goto_cursor(unsigned char);			// Set Position Cursor LCD
+void lcd_print(unsigned char*);				// Print Display to LCD
+//char busy_lcd(void);					// Read Busy LCD Status
+void enable_lcd(void);	 				// Enable Pulse
+void delay(unsigned long int);				// Delay Function
 
 
 /****************************/
@@ -41,8 +41,8 @@ void delay(unsigned long int);							// Delay Function
 /****************************/
 void lcd_out_data4(unsigned char val)
 {
-IOCLR0 = (LCD_DATA);	  								// Reset 4-Bit Pin Data
-  IOSET0 = (val<<16); 									// EN,0,RW,RS:DDDD:0000:0000:0000:0000:0000:0000   
+IOCLR0 = (LCD_DATA);	  				// Reset 4-Bit Pin Data
+  IOSET0 = (val<<16); 					// EN,0,RW,RS:DDDD:0000:0000:0000:0000:0000:0000   
  
 }
 
@@ -54,15 +54,11 @@ IOCLR0 = (LCD_DATA);	  								// Reset 4-Bit Pin Data
 void lcd_write_byte(unsigned char val)
 {  
       
-  //lcd_out_data4((val>>4)&0x0F);							// Strobe 4-Bit High-Nibble to LCD
-  lcd_out_data4(val);						          	// Strobe 4-Bit High-Nibble to LCD 
-  enable_lcd();											// Enable Pulse
-  
-  //lcd_out_data4(val&0x0F);				  				// Strobe 4-Bit Low-Nibble to LCD
-  //enable_lcd();											// Enable Pulse  
+  //lcd_out_data4((val>>4)&0x0F);			// Strobe 4-Bit High-Nibble to LCD
+  lcd_out_data4(val);					// Strobe 4-Bit High-Nibble to LCD 
+  enable_lcd();						// Enable Pulse
   
   delay(800000);
- // while(busy_lcd());      								// Wait LCD Execute Complete  
 }
 
 /****************************/
@@ -71,8 +67,8 @@ void lcd_write_byte(unsigned char val)
 void lcd_write_control(unsigned char val)
 { 
 
-  lcd_rs_clr();											// RS = 0 = Instruction Select
-  lcd_write_byte(val);									// Strobe Command Byte	    
+  lcd_rs_clr();						// RS = 0 = Instruction Select
+  lcd_write_byte(val);					// Strobe Command Byte	    
 }
 
 /****************************/
@@ -80,8 +76,8 @@ void lcd_write_control(unsigned char val)
 /****************************/
 void lcd_write_ascii(unsigned char c)
 {  
-  lcd_rs_set();											// RS = 1 = Data Select
-  lcd_write_byte(c);		   							// Strobe 1 Byte to LCD    
+  lcd_rs_set();						// RS = 1 = Data Select
+  lcd_write_byte(c);					// Strobe 1 Byte to LCD    
 }
 
 /*******************************/
@@ -89,35 +85,31 @@ void lcd_write_ascii(unsigned char c)
 /*******************************/
 void lcd_init()
 {
-  unsigned int i;										// LCD Initial Delay Count 
+  unsigned int i;				       // LCD Initial Delay Count 
 
-  PINSEL1  = 0x00000000;	// Mathew- Configuring	P0.16 to P0.31 as GPIO pins
-  							// GPIO1[31..16] = I/O Function
-  lcd_dir_write();			// lcd_direction_write		// LCD Data Bus = Write
-  for (i=0;i<1000;i++);								    // Power-On Delay (15 mS)
+  PINSEL1  = 0x00000000;	                       // Configuring	P0.16 to P0.31 as GPIO pins
+  				                       // GPIO1[31..16] = I/O Function
+  lcd_dir_write();			               // lcd_direction_write		// LCD Data Bus = Write
+  for (i=0;i<1000;i++);				       // Power-On Delay (15 mS)
 
-  IOCLR0 = (LCD_IOALL);									// Reset (RS,RW,EN,4-Bit Data) Pin
-  IOSET0 = (LCD_D5|LCD_D4);								// DDDD:EN,RW,RS,0:0000:0000:0000:0000:0000:0000 
-  enable_lcd();											// Enable Pulse	 
-  for (i=0;i<100;i++);							     	// Delay 4.1mS
+  IOCLR0 = (LCD_IOALL);				       // Reset (RS,RW,EN,4-Bit Data) Pin
+  IOSET0 = (LCD_D5|LCD_D4);			       // DDDD:EN,RW,RS,0:0000:0000:0000:0000:0000:0000 
+  enable_lcd();					       // Enable Pulse	 
+  for (i=0;i<100;i++);				       // Delay 4.1mS
 
-  IOCLR0 = (LCD_IOALL);	  								// Reset (RS,RW,EN,4-Bit Data) Pin
-  IOSET0 = (LCD_D5|LCD_D4);								// DDDD:EN,RW,RS,0:0000:0000:0000:0000:0000:0000 
-  enable_lcd();											// Enable Pulse
-  for (i=0;i<100;i++);									// delay 100uS
+  IOCLR0 = (LCD_IOALL);	  			       // Reset (RS,RW,EN,4-Bit Data) Pin
+  IOSET0 = (LCD_D5|LCD_D4);			       // DDDD:EN,RW,RS,0:0000:0000:0000:0000:0000:0000 
+  enable_lcd();					       // Enable Pulse
+  for (i=0;i<100;i++);				       // delay 100uS
+  IOCLR0 = (LCD_IOALL);	  			       // Reset (RS,RW,EN,4-Bit Data) Pin
+  IOSET0 = (LCD_D5|LCD_D4);			       // DDDD:EN,RW,RS,0:0000:0000:0000:0000:0000:0000 
+  enable_lcd();					       // Enable Pulse
+  delay(10000);                                        //while(busy_lcd());      								                                              // Wait LCD Execute Complete
 
-  IOCLR0 = (LCD_IOALL);	  								// Reset (RS,RW,EN,4-Bit Data) Pin
-  IOSET0 = (LCD_D5|LCD_D4);								// DDDD:EN,RW,RS,0:0000:0000:0000:0000:0000:0000 
-  enable_lcd();											// Enable Pulse
+  IOCLR0 = (LCD_IOALL);	                               // Reset (RS,RW,EN,4-Bit Data) Pin
+  IOSET0 = (LCD_D5);				       // DDDD:EN,RW,RS,0:0000:0000:0000:0000:0000:0000 
+  enable_lcd();					       // Enable Pulse
   delay(10000);
-  //while(busy_lcd());      								// Wait LCD Execute Complete
- 
-  IOCLR0 = (LCD_IOALL);	  								// Reset (RS,RW,EN,4-Bit Data) Pin
-  IOSET0 = (LCD_D5);									// DDDD:EN,RW,RS,0:0000:0000:0000:0000:0000:0000 
-  enable_lcd();											// Enable Pulse
-  delay(10000);
- // while(busy_lcd());      								// Wait LCD Execute Complete
-
       
   lcd_write_control(0x38);  							// Function Set (DL=0 4-Bit,N=1 2 Line,F=0 5X7)
   lcd_write_control(0x0E);  							// Display on/off Control (Entry Display,Cursor off,Cursor not Blink)
